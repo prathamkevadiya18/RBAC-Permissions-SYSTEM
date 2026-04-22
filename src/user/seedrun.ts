@@ -2,6 +2,7 @@ import 'reflect-metadata';
 import { DataSource } from 'typeorm';
 import * as bcrypt from 'bcrypt';
 import { user } from './entity/user.entity';
+import { role } from '../role/entity/role.entity';
 
 async function runSeed() {
   const dataSource = new DataSource({
@@ -11,19 +12,29 @@ async function runSeed() {
     username: 'postgres',
     password: 'Pratham@21',
     database: 'fullapp',
-    entities: [user],
+    entities: [user, role],
     synchronize: true,
   });
   await dataSource.initialize();
 
   try {
     const repo = dataSource.getRepository(user);
+    const roleRepo = dataSource.getRepository(role);
     const email = 'superadmin@example.com';
     const password = 'admin@123';
 
+    let superAdminRole = await roleRepo.findOne({ where: { name: 'SUPERADMIN' } });
+    if (!superAdminRole) {
+      superAdminRole = roleRepo.create({
+        name: 'SUPERADMIN',
+        status: true,
+      });
+      await roleRepo.save(superAdminRole);
+    }
+
     const hashed = await bcrypt.hash(password, 10);
     const entity = repo.create({
-      role: 'SUPERADMIN',
+      role: superAdminRole,
       email,
       pass: hashed,
     });

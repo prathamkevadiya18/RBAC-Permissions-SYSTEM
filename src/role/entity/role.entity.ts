@@ -1,6 +1,6 @@
-import { BeforeInsert, Column, CreateDateColumn, DeleteDateColumn, Entity, PrimaryGeneratedColumn, UpdateDateColumn } from "typeorm";
+import { BeforeInsert, Column, CreateDateColumn, DeleteDateColumn, Entity, PrimaryGeneratedColumn, UpdateDateColumn,ManyToMany,JoinTable } from "typeorm";
 import slugify from 'slugify';
-
+import { Permission } from "../../permission/entity/permission.entity";
 @Entity()
 export class role{
 
@@ -16,6 +16,11 @@ export class role{
     @Column({ type: 'varchar', nullable: true })
     slug!: string ;
     
+
+    @ManyToMany(() => Permission, permission => permission.name)
+    @JoinTable()
+    permissions !: Permission[];
+
     @CreateDateColumn({ type: 'timestamp' })
      createat !: Date;
     

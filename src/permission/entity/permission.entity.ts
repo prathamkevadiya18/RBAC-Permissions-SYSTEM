@@ -1,9 +1,11 @@
-import { Column, Entity ,PrimaryGeneratedColumn,CreateDateColumn,UpdateDateColumn,DeleteDateColumn,BeforeInsert } from "typeorm";
+import { Column, Entity ,PrimaryGeneratedColumn,CreateDateColumn,UpdateDateColumn,DeleteDateColumn,BeforeInsert ,ManyToMany} from "typeorm";
 import slugify from 'slugify'
+import { role } from "../../role/entity/role.entity";
+
 @Entity()
 export class Permission{
 
-    @PrimaryGeneratedColumn()
+    @PrimaryGeneratedColumn('uuid')
      id !:string;
 
     @Column()
@@ -12,6 +14,9 @@ export class Permission{
      @Column({ type: 'varchar', nullable: true })
      slug!: string ;
     
+     @ManyToMany(() => role, role => role.permissions)
+     name!: role[];
+
     @CreateDateColumn({ type: 'timestamp' })
      createat !: Date;
     
