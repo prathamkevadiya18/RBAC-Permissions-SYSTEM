@@ -11,7 +11,7 @@ export class PermissionService {
         const pdata = this.permissionEntity.create(per) 
         return await this.permissionEntity.save(pdata)
     }
-
+   
     // async del(pid:string){
     //     return this.permissionEntity.delete(pid)
     // }

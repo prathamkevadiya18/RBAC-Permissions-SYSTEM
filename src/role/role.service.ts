@@ -34,4 +34,24 @@ export class RoleService {
         };
     }
 
+    // async updatepermision(rolename: string, permissionIds: string[]) {
+    //     const Role = await this.roleEntity.findOne({where: { name: rolename },
+    //                                                 relations: ['permissions']});
+    //     if (!Role) {
+    //       return { message: 'Role not found' };
+    //     }
+    //     const permissions = await this.permissionEntity.findBy({id: In(permissionIds)});
+    //     if (permissions.length === 0) {
+    //       return { message: 'No permissions found' };
+    //     }
+    //     Role.permissions = permissions;
+    //     const updatedRole = await this.roleEntity.update(Role);
+    //     return {
+    //       message: 'Permissions added to role successfully',
+    //       role: updatedRole
+    //     };
+    // }
+
+
+
 }

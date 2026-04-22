@@ -1,9 +1,9 @@
-import { Injectable, UnauthorizedException } from '@nestjs/common';
+import { Injectable, UnauthorizedException, ForbiddenException } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
-//import { Permission } from '../permission/entity/permission.entity';
 import { user } from '../user/entity/user.entity';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
+import { Request } from 'express';
 
 @Injectable()
 export class AuthMiddleware {
@@ -23,14 +23,28 @@ export class AuthMiddleware {
         }
     }
 
-//   async checkpermission(userid:string){
-//     const fuser = await this.userEntity.findOne({where:{id:userid},relations: ['role', 'role.permissions']})
-//     if(!fuser){
-//         return {message:"user not found"}
-//     }
-    
+    async checkpermission(userid: string, requiredPermission: string) {
+        const fuser = await this.userEntity.findOne({where: { id: userid },
+                                                     relations: ['role', 'role.permissions'],});
+        if (!fuser) {
+           throw new UnauthorizedException('User not found');
+        }
+        const hasPermission = fuser.role?.permissions?.some(
+            (p) => p.permission.trim().toLowerCase() === requiredPermission.trim().toLowerCase(),
+        );
+        if (!hasPermission) {
+            throw new ForbiddenException('Permission denied');
+        }
+        return true;
+    }
 
-//    }
+    async checkRequestPermission(authorization: string, request: Request) {
+        const token = this.verifyBearerToken(authorization);
+        const userid = token.sub ?? token.email;
+        const requiredPermission = `${request.method}:${request.route?.path ?? request.path}`;
+        
+        return this.checkpermission(userid, requiredPermission);
+    }
 
     
 }

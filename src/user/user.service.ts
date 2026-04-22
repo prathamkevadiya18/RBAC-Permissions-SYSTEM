@@ -21,20 +21,23 @@ export class UserService {
     }
 
     async login(email:string, pass:string){
-        const admin = await this.userEntity.findOne({where:{email}});
+            const logUser = await this.userEntity.findOne({
+                where:{email},
+                relations: ['role'],
+            });
 
-        if(!admin){
+        if(!logUser){
             return {mesaage:"invaild email id"}
         }
-        const vaildpass = await bcrypt.compare(pass ,admin.pass)
+        const vaildpass = await bcrypt.compare(pass ,logUser.pass)
         if(!vaildpass){
             return {mesaage:"invaild pass"}
         }
-        const playlod = {email:admin.email}
-        const token = this.jwtService.sign(playlod);
+            const payload = {sub: logUser.id,email: logUser.email,};
+            const token = this.jwtService.sign(payload);
 
-        return {mesaage: "superadmin successful login",
-                admin : admin.email,
+        return {mesaage: "successful login",
+                admin : logUser.email,
                 accesstoken:token}
     }
 
@@ -59,5 +62,8 @@ export class UserService {
         }
         return user;
     }
+   detail(){
+    return {message:"all detail"}
+   }
 
 }
