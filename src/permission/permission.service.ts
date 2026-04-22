@@ -7,8 +7,12 @@ import { Repository } from 'typeorm';
 export class PermissionService {
     constructor(@InjectRepository(Permission) private readonly permissionEntity :Repository<Permission>){}
 
-    async create(permission:string){
-        const pdata = this.permissionEntity.create({permission}) 
+    async create(per:{permission:string}){
+        const pdata = this.permissionEntity.create(per) 
         return await this.permissionEntity.save(pdata)
     }
+
+    // async del(pid:string){
+    //     return this.permissionEntity.delete(pid)
+    // }
 }

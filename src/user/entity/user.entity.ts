@@ -1,12 +1,13 @@
-import { Column, Entity, PrimaryGeneratedColumn ,CreateDateColumn,UpdateDateColumn,DeleteDateColumn,BeforeInsert} from "typeorm";
+import { Column, Entity, PrimaryGeneratedColumn ,CreateDateColumn,UpdateDateColumn,DeleteDateColumn,BeforeInsert,ManyToOne} from "typeorm";
 import slugify from 'slugify';
+import { role } from "../../role/entity/role.entity";
 @Entity()
 export class user{
     @PrimaryGeneratedColumn('uuid')
-    id!:number;
+    id!:string;
 
-    @Column({nullable: true})
-    role!:string;
+    @ManyToOne(() => role, { nullable: true })
+    role!: role;
 
     @Column({ unique: true })
     email !:string;
@@ -28,6 +29,6 @@ export class user{
 
     @BeforeInsert()
      genslug(){
-         this.slug = slugify(this.role, { lower: true, strict: true });
+         this.slug = slugify(this.email, { lower: true, strict: true });
      }
 }

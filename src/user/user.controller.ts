@@ -1,4 +1,4 @@
-import { Controller, Post ,Body, Headers } from '@nestjs/common';
+import { Controller, Post ,Body, Headers, Put, Param, Get } from '@nestjs/common';
 import { UserService } from './user.service';
 import { AuthMiddleware } from '../auth/auth.middleware';
 
@@ -16,7 +16,17 @@ export class UserController {
    } 
 
    @Post('log')
-  log(@Body() admin:{email:string,pass:string}){
+   log(@Body() admin:{email:string,pass:string}){
     return this.UserService.login(admin.email,admin.pass);
   }
+   
+  @Put('addrole/:id')
+    addrol(@Param('id') userid:string,@Body('roleid') roleid:string){
+     return this.UserService.addrole(userid,roleid)
+   }
+
+   @Get('/:id')
+   get(@Param('id') userid:string){
+     return this.UserService.find(userid)
+   }
 }

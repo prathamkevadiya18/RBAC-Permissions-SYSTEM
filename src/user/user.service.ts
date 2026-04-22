@@ -4,10 +4,12 @@ import { Repository } from 'typeorm';
 import { user } from './entity/user.entity';
 import bcrypt from 'bcrypt';
 import { JwtService } from '@nestjs/jwt';
+import { role } from '../role/entity/role.entity';
 
 @Injectable()
 export class UserService {
     constructor(@InjectRepository(user) private readonly userEntity :Repository<user>,
+                @InjectRepository(role) private readonly roleEntity :Repository<role>,
                  private readonly jwtService: JwtService){}
 
     async create(userdata:{email:string,pass:string}){
@@ -34,6 +36,28 @@ export class UserService {
         return {mesaage: "superadmin successful login",
                 admin : admin.email,
                 accesstoken:token}
+    }
+
+    async addrole(userid:string, roleid:string){
+      const up = await this.userEntity.update(userid,{ role:{ id: roleid }})
+        const updatedUser = await this.userEntity.findOne({where: { id: userid },relations: ['role', 'role.permissions']});
+
+        if (!updatedUser) {
+         return { message: "User not found" };
+        }
+
+        return {message: "User update successfully",
+                updateduser:{userId:updatedUser.id,role: updatedUser.role,
+                             createat:updatedUser.createat,
+                             updateat:updatedUser.updateat},};
+    }
+
+    async find(userid:string){
+        const user =  this.userEntity.findOne({where:{id:userid},relations: ['role', 'role.permissions']})
+        if (!user) {
+         return { message: "User not found" };
+        }
+        return user;
     }
 
 }
