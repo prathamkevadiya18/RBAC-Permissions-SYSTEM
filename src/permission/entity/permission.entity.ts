@@ -28,6 +28,6 @@ export class Permission{
 
     @BeforeInsert()
      genslug(){
-         this.slug = slugify(this.permission, { lower: true, strict: true });
+         this.slug = slugify(this.permission.replace(/\//g, '_'), { lower: true, replacement: '_',strict:  false });
      }
 }

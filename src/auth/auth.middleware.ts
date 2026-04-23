@@ -4,6 +4,7 @@ import { user } from '../user/entity/user.entity';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { Request } from 'express';
+import { log } from 'console';
 
 @Injectable()
 export class AuthMiddleware {
@@ -30,7 +31,7 @@ export class AuthMiddleware {
            throw new UnauthorizedException('User not found');
         }
         const hasPermission = fuser.role?.permissions?.some(
-            (p) => p.permission.trim().toLowerCase() === requiredPermission.trim().toLowerCase(),
+            (p) => p.slug === requiredPermission.trim().toLowerCase().replace(/\//g, '_'),
         );
         if (!hasPermission) {
             throw new ForbiddenException('Permission denied');
@@ -41,8 +42,8 @@ export class AuthMiddleware {
     async checkRequestPermission(authorization: string, request: Request) {
         const token = this.verifyBearerToken(authorization);
         const userid = token.sub ?? token.email;
-        const requiredPermission = `${request.method}:${request.route?.path ?? request.path}`;
-        
+      //const requiredPermission = `${request.method}:${request.route?.path ?? request.path}`;
+        let requiredPermission = request.path.replace(/^\//, '');        
         return this.checkpermission(userid, requiredPermission);
     }
 
