@@ -1,6 +1,7 @@
-import { Controller, Post ,Body, Headers, Put, Param, Get } from '@nestjs/common';
+import { Controller, Post ,Body, Headers, Put, Param, Get, Req, } from '@nestjs/common';
 import { UserService } from './user.service';
 import { AuthMiddleware } from '../auth/auth.middleware';
+import type { Request } from 'express';
 
 @Controller('user')
 export class UserController {
@@ -23,6 +24,12 @@ export class UserController {
   @Put('addrole/:id')
     addrol(@Param('id') userid:string,@Body('roleid') roleid:string){
      return this.UserService.addrole(userid,roleid)
+   }
+
+   @Get('/get/detail')
+   async check(@Headers('authorization') authorization: string, @Req() request: Request){
+   await this.authMiddleware.checkRequestPermission(authorization, request);
+    return this.UserService.detail()
    }
 
    @Get('/:id')
