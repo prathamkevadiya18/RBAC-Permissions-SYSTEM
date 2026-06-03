@@ -28,8 +28,11 @@ export class UserController {
 
    @Get('/get/detail')
    async check(@Headers('authorization') authorization: string, @Req() request: Request){
-   await this.authMiddleware.checkRequestPermission(authorization, request);
-    return this.UserService.detail()
+    //await this.authMiddleware.checkRequestPermission(authorization, request);
+    //return this.UserService.detail()
+    const userid = await this.authMiddleware.checkRequestPermission(authorization, request);
+    return this.UserService.detail(userid)
+    
    }
 
    @Get('/:id')
