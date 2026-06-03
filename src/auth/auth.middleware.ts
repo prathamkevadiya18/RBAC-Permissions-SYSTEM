@@ -42,9 +42,12 @@ export class AuthMiddleware {
     async checkRequestPermission(authorization: string, request: Request) {
         const token = this.verifyBearerToken(authorization);
         const userid = token.sub ?? token.email;
-      //const requiredPermission = `${request.method}:${request.route?.path ?? request.path}`;
-        let requiredPermission = request.path.replace(/^\//, '');        
-        return this.checkpermission(userid, requiredPermission);
+        //const requiredPermission = `${request.method}:${request.route?.path ?? request.path}`;
+        //let requiredPermission = request.path.replace(/^\//, '');        
+        //return this.checkpermission(userid, requiredPermission);
+        let requiredPermission = request.path.replace(/^\//, '');
+        await this.checkpermission(userid, requiredPermission);
+        return userid;
     }
 
     

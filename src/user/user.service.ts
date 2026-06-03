@@ -62,8 +62,12 @@ export class UserService {
         }
         return user;
     }
-   detail(){
-    return {message:"all detail"}
-   }
+    async detail(userid:string){
+     const user = await this.userEntity.findOne({where:{id:userid},relations: ['role', 'role.permissions']});
+     if (!user) {
+      return { message: "User not found" };
+     }
+     return user;
+    }
 
 }
