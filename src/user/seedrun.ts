@@ -10,7 +10,7 @@ async function runSeed() {
     host: 'localhost',
     port: 5432,
     username: 'postgres',
-    password: 'Pratham@21',
+    password: 'yourpass',
     database: 'fullapp',
     entities: [user, role],
     synchronize: true,
