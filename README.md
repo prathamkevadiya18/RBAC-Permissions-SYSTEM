@@ -13,11 +13,34 @@ A NestJS (v11) API for User, Role, and Permission Management with dynamic route 
 
 ---
 
-## 🗄️ Database Schema (Short)
-The database consist of three main tables:
-*   **User (`user`):** Contains ID, email, hashed password, slug, and a foreign key linking to a Role.
-*   **Role (`role`):** Contains ID, name, active status, slug, and a Many-to-Many link to Permissions.
-*   **Permission (`Permission`):** Contains ID, permission path (e.g., `user/get/detail`), and slug (e.g., `user_get_detail`).
+## 🗄️ Database Schema & Relationships
+
+The database is built on **PostgreSQL** using **TypeORM** schemas with automatic timestamping. It consists of the following tables:
+
+### 1. User Table (`user`)
+Stores user profiles and login credentials.
+*   **`id`** (UUID, Primary Key)
+*   **`email`** (VARCHAR, Unique): Used for user login.
+*   **`pass`** (VARCHAR): Hashed user password.
+*   **`slug`** (VARCHAR): Auto-generated lowercase slug from email.
+*   **`roleId`** (UUID, Foreign Key): Links to the `role` table (Many-to-One).
+
+### 2. Role Table (`role`)
+Stores roles / permission groups.
+*   **`id`** (UUID, Primary Key)
+*   **`name`** (VARCHAR): Name of the role (e.g. `SUPERADMIN`, `admin`).
+*   **`status`** (BOOLEAN): Active status of the role.
+*   **`slug`** (VARCHAR): Auto-generated slug from role name.
+
+### 3. Permission Table (`Permission`)
+Stores registered API route permission tags.
+*   **`id`** (UUID, Primary Key)
+*   **`permission`** (VARCHAR): Plain route path string (e.g. `user/get/detail`).
+*   **`slug`** (VARCHAR): Auto-generated slug from the path (e.g. `user_get_detail`).
+
+### 4. Relations
+*   **User ➔ Role (Many-to-One):** Each user can have one assigned role. A role can be assigned to multiple users.
+*   **Role ➔ Permission (Many-to-Many):** Managed via the auto-generated join table `role_permissions_permission`. A role can hold multiple permissions, and a permission can belong to multiple roles.
 
 ---
 
